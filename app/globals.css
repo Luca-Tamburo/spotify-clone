@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom class selectors */
+.sidebar-text-link {
+  @apply text-xs w-full group-focus:border-b-4 border-spotify-light-gray transition-all duration-500 ease-out hover:text-white hover:font-bold;
+}
+
+.footer-text-link {
+  @apply w-full text-spotify-light-gray hover:text-white hover:underline;
+}
