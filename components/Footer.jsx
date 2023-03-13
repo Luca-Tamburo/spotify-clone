@@ -2,7 +2,7 @@
 import React from 'react'
 
 // Constants
-import FooterInfo from '../../constants/Footer';
+import FooterInfo from '../constants/Footer';
 
 // Styles
 import { GrInstagram, GrTwitter } from 'react-icons/gr';
@@ -35,7 +35,26 @@ const Footer = () => {
                     )
                 })}
             </div>
-            <div className='flex flex-row-reverse w-6/12 mr-6'>
+            <div className='w-2/12 mt-7'>
+                <div className='flex flex-col'>
+                    {FooterInfo[3].map((item, index) => {
+                        return (
+                            <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="flex footer-text-link mt-1">{item.text}</a>
+                        )
+                    })}
+                </div>
+            </div>
+            {/* TODO: Capire se è possibile gestire i cookie. Se è possibile fare il modal con le preferenze */}
+            <div className='w-2/12 mt-7'>
+                <div className='flex flex-col'>
+                    {FooterInfo[4].map((item, index) => {
+                        return (
+                            <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="flex footer-text-link mt-1">{item.text}</a>
+                        )
+                    })}
+                </div>
+            </div>
+            <div className='flex flex-row-reverse w-4/12 mr-6 mt-10'>
                 <a href='https://www.facebook.com/Spotify' target="_blank" rel="noopener noreferrer">
                     <BsFacebook size={30} className="text-white" />
                 </a>

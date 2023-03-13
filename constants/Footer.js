@@ -19,10 +19,24 @@ const UsefulLinks = [
     { id: "10", url: "https://www.spotify.com/it/legal/end-user-agreement/#s15", text: "Consumer rights" },
 ]
 
+const LegalPrivacy = [
+    { id: "11", url: "https://support.spotify.com/it/", text: "Legal" },
+    { id: "12", url: "https://www.spotify.com/it/free/", text: "Privacy Center" },
+    { id: "13", url: "https://www.spotify.com/it/legal/end-user-agreement/#s15", text: "Privacy Policy" },
+]
+
+const CookiesAds = [
+    { id: "14", url: "https://www.spotify.com/it/legal/end-user-agreement/#s15", text: "Cookies" },
+    { id: "15", url: "https://www.spotify.com/it/free/", text: "About Ads" },
+    { id: "16", url: "https://support.spotify.com/it/", text: "Cookie Settings" },
+]
+
 const Footer = [
     Company,
     Communities,
     UsefulLinks,
+    LegalPrivacy,
+    CookiesAds,
 ]
 
 export default Footer;
