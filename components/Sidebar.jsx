@@ -31,7 +31,7 @@ const Sidebar = () => {
 
     if (!loading)
         return (
-            <div className="bg-black text-spotify-light-gray w-2/12 h-screen pl-6">
+            <div className="bg-black text-spotify-light-gray w-2/12 h-screen pl-6 fixed">
                 {/* First Section */}
                 <SidebarLink />
                 <hr className="w-11/12 mt-4" />

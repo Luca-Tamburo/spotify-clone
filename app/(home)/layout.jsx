@@ -17,7 +17,7 @@ const HomeLayout = ({ children }) => {
                 {status === 'unauthenticated' ? <MainComponents.UnLoggedIn /> :
                     <div className="flex" >
                         <MainComponents.Sidebar />
-                        <div className='w-11/12'>
+                        <div className='w-10/12 ml-auto'>
                             <MainComponents.Navbar />
                             {children}
                             <MainComponents.Footer />
