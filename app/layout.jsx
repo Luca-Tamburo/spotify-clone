@@ -6,14 +6,19 @@ import './globals.css'
 // Components
 import Providers from './providers'
 
+// Context
+import { DataContextProvider } from '@/contexts/DataContext'
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head />
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <DataContextProvider>
+          <Providers>
+            {children}
+          </Providers>
+        </DataContextProvider>
       </body>
     </html >
   )

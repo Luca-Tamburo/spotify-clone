@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link';
 import React from 'react'
 
-const TopTracks = ({ index, trackInfo }) => {
+const TracksList = ({ index, trackInfo }) => {
 
     const totalSeconds = Math.floor(trackInfo.song.duration / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -18,7 +18,7 @@ const TopTracks = ({ index, trackInfo }) => {
                         <Image
                             src={trackInfo.type.toLowerCase() === "album" ? trackInfo.album.image : trackInfo.song.image}
                             alt={trackInfo.type.toLowerCase() === "album" ? "Album Image" : "Song Image"}
-                            width={50}
+                            width={45}
                             height={50}
                             className="mr-3"
                         />
@@ -57,4 +57,4 @@ const TopTracks = ({ index, trackInfo }) => {
     )
 }
 
-export default TopTracks
+export default TracksList

@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import Navbar from "./Navbar";
 import PlaylistCard from "./Cards/PlaylistCard";
 import Sidebar from "./Sidebar";
-import TopTracks from "./TopTracks";
+import TracksList from "./TracksList";
 import UnLoggedIn from "./UnLoggedIn";
 
 export {
@@ -13,6 +13,6 @@ export {
     Navbar,
     PlaylistCard,
     Sidebar,
-    TopTracks,
+    TracksList,
     UnLoggedIn,
 }

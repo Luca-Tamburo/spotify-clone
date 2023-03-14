@@ -3,7 +3,7 @@
 // Imports
 import Link from "next/link"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { useSession } from 'next-auth/react';
 
 // Hooks
@@ -13,11 +13,15 @@ import useSpotify from '@/hooks/useSpotify';
 import Loading from '@/app/(home)/loading';
 import SidebarLink from "@/constants/SidebarLink";
 
+// Context
+import { DataContext } from "@/contexts/DataContext";
+
 const Sidebar = () => {
     const { data: session } = useSession();
     const spotifyApi = useSpotify();
     const [userPlaylists, setUserPlaylists] = useState({});
     const [loading, setLoading] = useState(true);
+    const [updateSidebar, setUpdateSidebar] = useContext(DataContext)
 
     useEffect(() => {
         spotifyApi.getUserPlaylists(`${session.user.username}`)
@@ -27,7 +31,7 @@ const Sidebar = () => {
                 console.log('Something went wrong!', err);
             })
             .finally(() => setLoading(false));
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [updateSidebar]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!loading)
         return (

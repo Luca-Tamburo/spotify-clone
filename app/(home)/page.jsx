@@ -26,7 +26,6 @@ const Home = () => {
 
         const playlists = {
           featuredPlaylists: {
-            "message": featPlaylists.body.message,
             "infos": featPlaylists.body.playlists.items.map(playlist => ({
               "id": playlist.id,
               "name": playlist.name,
@@ -58,7 +57,7 @@ const Home = () => {
     return (
       <div className="bg-spotify-dark text-white px-8 pt-4">
         <p className="text-4xl font-bold ml-1">{greeting}</p>
-        <p className="text-2xl font-bold mt-4 ml-2">{suggestedPlaylists.featuredPlaylists.message}</p>
+        <p className="text-2xl font-bold mt-4 ml-2">Selected For You</p>
         {/* Featured playlists section */}
         <div className="flex flex-wrap mt-4">
           {suggestedPlaylists.featuredPlaylists.infos.map((playlistInfo, index) => {
@@ -72,6 +71,7 @@ const Home = () => {
         {/* New Release playlists section */}
         <p className="text-2xl font-bold mt-6 ml-2">New Releases</p>
         <div className="flex flex-wrap mt-1">
+          {/* TODO: Fare un componente albumCard che abbia il link component a /album */}
           {suggestedPlaylists.newReleases.map((playlistInfo, index) => {
             return (
               <div className='w-1/6 px-2 mt-4' key={playlistInfo.id}>

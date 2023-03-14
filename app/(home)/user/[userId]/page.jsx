@@ -122,7 +122,7 @@ const UserPage = () => {
                         <table className='w-full table-auto border-separate border-spacing-y-3'>
                             {aboutMe.userTopTracks.map((trackInfo, index) => {
                                 return (
-                                    <UI.TopTracks key={trackInfo.id} trackInfo={trackInfo} index={index} />
+                                    <UI.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} />
                                 )
                             })}
                         </table>

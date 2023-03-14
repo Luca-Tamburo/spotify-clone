@@ -99,7 +99,7 @@ const Navbar = () => {
                                     {isOpen ? <IoIosArrowUp className='mt-1.5 ml-1.5' /> : < IoIosArrowDown className='mt-1.5 ml-1.5' />}
                                 </button>
                                 {isOpen &&
-                                    <div className='absolute bg-spotify-light-dark text-white mt-2 font-semibold rounded '>
+                                    <div className='absolute bg-spotify-light-dark text-white mt-2 font-semibold rounded' onMouseLeave={() => setIsOpen(false)} onClick={() => setIsOpen(false)}>
                                         <ul className='m-3 pt-1'>
                                             <li className='hover:bg-spotify-gray'>
                                                 <Link href={linkUserPage}>Profile</Link>
