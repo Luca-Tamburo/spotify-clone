@@ -8,7 +8,7 @@ import useSpotify from '@/hooks/useSpotify';
 
 // Components
 import LoadingPage from '@/app/(home)/loading';
-import { TopTracks } from '@/components';
+import * as UI from '../../../../../../components/index'
 
 // Styles
 import { BsClockHistory } from 'react-icons/bs'
@@ -22,27 +22,7 @@ const TopTracksPage = () => {
   useEffect(() => {
     spotifyApi.getMyTopTracks({ limit: 50 })
       .then((data) => {
-        const personalData = data.body.items.map(track => ({
-          "album": {
-            "id": track.album.id,
-            "name": track.album.name,
-            "image": track.album.images[2].url,
-          },
-          "song": {
-            "name": track.name,
-            "image": track.album.images[2].url,
-            "duration": track.duration_ms,
-          },
-          "artists": track.artists.map(artist => ({
-            "id": artist.id,
-            "name": artist.name,
-          })),
-          "explicit": track.explicit,
-          "type": track.album.type
-        }))
-
-        setUserTopTracks(personalData)
-
+        setUserTopTracks(data.body.items)
       }).catch((err) => {
         console.log('Something went wrong!', err);
       })
@@ -67,7 +47,7 @@ const TopTracksPage = () => {
           </thead>
           {userTopTracks.map((trackInfo, index) => {
             return (
-              <TopTracks key={trackInfo.id} trackInfo={trackInfo} index={index} />
+              <UI.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} />
             )
           })}
         </table>

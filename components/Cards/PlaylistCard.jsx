@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 
 // Styles
 import { BsFillPlayCircleFill } from 'react-icons/bs'
+import { MdHideImage } from 'react-icons/md'
 
 const PlaylistCard = ({ playlistInfo }) => {
     const [isHovering, setIsHovering] = useState(false);
@@ -19,13 +20,16 @@ const PlaylistCard = ({ playlistInfo }) => {
     return (
         <div className='relative bg-spotify-semi-light-dark h-64 w-44 rounded-lg hover:bg-spotify-light-dark' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <Link href={`/playlist/${playlistInfo.id}`}>
-                <Image
-                    src={playlistInfo.images[0].url}
-                    alt="Card Image"
-                    width={300}
-                    height={300}
-                    className='px-4 py-2 h-3/5'
-                />
+                {/* CAPIRE SE SI PUÒ METTERE UN'ICONA O NO. */}
+                {playlistInfo.images.length === 0 ? <MdHideImage size={150} className="pl-6" /> :
+                    <Image
+                        src={playlistInfo.images[0].url}
+                        alt="Card Image"
+                        width={300}
+                        height={300}
+                        className='px-4 py-2 h-3/5'
+                    />
+                }
                 <p className='truncate text-white font-bold ml-4'>{playlistInfo.name}</p>
                 {playlistInfo.artistInfo &&
                     playlistInfo.artistInfo.map((artist, index) => {

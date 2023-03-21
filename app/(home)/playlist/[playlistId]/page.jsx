@@ -6,6 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 // Hooks
 import useSpotify from '@/hooks/useSpotify';
@@ -13,16 +15,15 @@ import useNotification from '@/hooks/useNotification';
 
 // Components'
 import LoadingPage from '../../loading';
-import { TracksList } from '@/components';
+import * as UI from '../../../../components/index'
 
 // Context
 import { DataContext } from '@/contexts/DataContext';
 
 // Styles
-import { BsFillPlayCircleFill, BsThreeDots, BsClockHistory } from 'react-icons/bs'
+import { BsFillPlayCircleFill, BsThreeDots } from 'react-icons/bs'
 import { HiOutlineHeart, HiHeart } from 'react-icons/hi'
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MdHideImage } from 'react-icons/md'
 
 const PlaylistsPage = () => {
     const { data: session } = useSession();
@@ -32,11 +33,14 @@ const PlaylistsPage = () => {
     const playlistId = url.split('/')[2]
 
     const [updateSidebar, setUpdateSidebar] = useContext(DataContext)
+    const [updateLikedSong, setUpdateLikedSong] = useContext(DataContext)
 
     const [loading, setLoading] = useState(true);
-    const [playlistInfo, setPlaylistInfo] = useState(undefined);
+    const [pageInfo, setPageInfo] = useState(undefined);
     const [isOpen, setIsOpen] = useState(false);
     const [isFollowed, setIsFollowed] = useState(false);
+    const [duration, setDuration] = useState(undefined)
+    const [likedSongs, setLikedSongs] = useState([undefined]);
 
     const handleAddFollow = (playlistId) => {
         spotifyApi.followPlaylist(playlistId, { 'public': true })
@@ -65,45 +69,38 @@ const PlaylistsPage = () => {
     useEffect(() => {
         const handleLoading = async () => {
             try {
-                const playlist = await spotifyApi.getPlaylist(playlistId);
-                const authorInfo = await spotifyApi.getUser(playlist.body.owner.id)
-                const checkFollowPlaylists = await spotifyApi.areFollowingPlaylist(playlist.body.owner.id, playlistId, [session.user.username])
+                const playlistInfo = await spotifyApi.getPlaylist(playlistId);
+                const author = await spotifyApi.getUser(playlistInfo.body.owner.id)
+                const checkFollowPlaylists = await spotifyApi.areFollowingPlaylist(playlistInfo.body.owner.id, playlistId, [session.user.username])
+
+                if (playlistInfo.body.tracks.items.length !== 0) {
+                    const first50SongIds = playlistInfo.body.tracks.items.map(it => ([it.track.id])).slice(0, 50)
+                    const second50SongIds = playlistInfo.body.tracks.items.map(it => ([it.track.id])).slice(51, 100)
+
+                    const checkFirst50LikedSong = await spotifyApi.containsMySavedTracks(first50SongIds)
+                    const checkSecond50LikedSong = await spotifyApi.containsMySavedTracks(second50SongIds)
+
+                    const checkLikedSong = checkFirst50LikedSong.body.concat(checkSecond50LikedSong.body)
+                    setLikedSongs(checkLikedSong)
+                }
 
                 checkFollowPlaylists.body.forEach(function (isFollowing) {
                     setIsFollowed(isFollowing)
                 });
 
-                const pageInfo = {
-                    "id": playlist.body.id,
-                    "name": playlist.body.name,
-                    "images": playlist.body.images[0].url,
-                    "owner": {
-                        "id": playlist.body.owner.id,
-                        "name": playlist.body.owner.display_name,
-                        "image": authorInfo.body.images[0].url
-                    },
-                    "description": playlist.body.description,
-                    "totFollowers": playlist.body.followers.total,
-                    "tracks": playlist.body.tracks.items.map(it => ({
-                        "id": it.track.id,
-                        "type": it.track.type,
-                        "artists": it.track.album.artists.map(it => ({
-                            "id": it.id,
-                            "name": it.name
-                        })),
-                        "album": {
-                            "id": it.track.album.id,
-                            "name": it.track.album.name,
-                            "image": it.track.album.images[2].url,
-                        },
-                        "song": {
-                            "name": it.track.name,
-                            "duration": it.track.duration_ms,
-                            "image": it.track.album.images[2].url,
-                        }
-                    })),
+                const pageInfos = {
+                    "playlist": playlistInfo.body,
+                    "authorInfo": author.body
                 }
-                setPlaylistInfo(pageInfo)
+
+                const totalDurationms = pageInfos.playlist.tracks.items.map(it => ({
+                    "duration": it.track.duration_ms
+                })).reduce((accumulator, currentTrack) => accumulator + currentTrack.duration, 0);
+                const hours = Math.floor(totalDurationms / 3600000);
+                const minutes = Math.floor((totalDurationms % 3600000) / 60000);
+
+                setPageInfo(pageInfos)
+                setDuration(hours + " hr " + minutes + " min")
                 setLoading(false);
             } catch (err) {
                 console.log('Something went wrong!', err);
@@ -111,55 +108,65 @@ const PlaylistsPage = () => {
         }
 
         handleLoading();
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [updateLikedSong]) // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!loading)
         return (
             <div className='flex flex-col bg-spotify-dark pt-10 pl-7 pr-10'>
                 {/* Playlist Info Section */}
                 <div className='flex'>
-                    <Image
-                        src={playlistInfo.images}
-                        alt="Playlist Background Image"
-                        height={220}
-                        width={220}
-                    />
-                    <div className='ml-8 mt-8'>
-                        <p className='text-white text-sm font-bold'> Playlist</p>
-                        <p className='text-white text-7xl font-bold'>{playlistInfo.name}</p>
-                        <div className='mt-10'>
-                            <p className='text-sm font-semibold text-spotify-light-gray mb-2'>{playlistInfo.description}</p>
+                    <div className='flex justify-center items-center w-56 h-56'>
+                        {pageInfo.playlist.images.length !== 0 ?
                             <Image
-                                src={playlistInfo.owner.image}
+                                src={pageInfo.playlist.images[0].url}
                                 alt="Playlist Background Image"
-                                width={25}
-                                height={25}
-                                className="inline-block"
-                            />
-                            <Link href={`/user/${playlistInfo.owner.id}`}>
-                                <span className='text-white text-sm font-bold hover:underline mx-2'>{playlistInfo.owner.name}</span>
+                                height={220}
+                                width={220}
+                                className="text-white font-bold"
+                            /> :
+                            <button>
+                                <MdHideImage size={150} className="mt-4 text-spotify-gray" />
+                            </button>
+                        }
+                    </div>
+                    <div className='ml-8'>
+                        <p className='text-white text-sm font-bold mt-6'> Playlist</p>
+                        <p className={`${pageInfo.playlist.name.length >= 20 ? "text-3xl" : "text-7xl"} text-white font-bold mt-4`}>{pageInfo.playlist.name}</p>
+                        <div className='mt-4'>
+                            <p className='text-sm font-semibold text-spotify-light-gray mt-4 mb-2'>{pageInfo.playlist.description}</p>
+                            {pageInfo.authorInfo.images[0].url &&
+                                <Image
+                                    src={pageInfo.authorInfo.images[0].url}
+                                    alt="User Profile Image"
+                                    width={25}
+                                    height={25}
+                                    className="inline-block"
+                                />
+                            }
+                            <Link href={`/user/${pageInfo.playlist.owner.id}`}>
+                                <span className='text-white text-sm font-bold hover:underline mx-2'>{pageInfo.playlist.owner.display_name}</span>
                             </Link>
                             <span className='text-white'>&bull;</span>
-                            <span className='text-white text-sm font-semibold mx-1'>{playlistInfo.totFollowers}{' '}likes</span>
+                            <span className='text-white text-sm font-semibold mx-1'>{pageInfo.playlist.followers.total}{' '}likes</span>
                             <span className='text-white'>&bull;</span>
-                            <span className='text-white text-sm font-semibold mx-1'>{playlistInfo.tracks.length}{' '}songs,</span>
-                            {/* TODO: Capire se è fattibile calcolare tutte le durate delle singole tracce e poi sommarle */}
-                            {/* <p className='text-spotify-light-gray text-sm font-semibold'>about {playlistInfo.tracks.duration_ms}</p> */}
+                            <span className='text-white text-sm font-semibold mx-1'>{pageInfo.playlist.tracks.items.length}{' '}songs,</span>
+                            <span className='text-spotify-light-gray text-sm font-semibold'>about {duration}</span>
                         </div>
                     </div>
-                </div>
+                </div >
                 {/* Play section */}
-                <div className='flex mt-10 '>
+                <div className='flex mt-10' >
                     <button className='text-spotify-green bg-black rounded-full hover:scale-105'>
                         <BsFillPlayCircleFill size={60} />
                     </button>
-                    {!isFollowed ?
-                        <button className='mx-8 text-spotify-light-gray hover:scale-105' onClick={() => handleAddFollow(playlistInfo.id)}>
-                            <HiOutlineHeart size={45} />
-                        </button>
-                        : <button className='mx-8 text-spotify-light-gray hover:scale-105' onClick={() => handleRemoveFollow(playlistInfo.id)}>
-                            <HiHeart size={45} />
-                        </button>
+                    {
+                        !isFollowed ?
+                            <button className='mx-8 text-spotify-light-gray hover:scale-105' onClick={() => handleAddFollow(pageInfo.playlist.id)}>
+                                <HiOutlineHeart size={45} />
+                            </button>
+                            : <button className='mx-8 text-spotify-light-gray hover:scale-105' onClick={() => handleRemoveFollow(pageInfo.playlist.id)}>
+                                <HiHeart size={45} className="text-spotify-green" />
+                            </button>
                     }
                     <div className='relative text-spotify-light-gray mt-3'>
                         <button onClick={() => setIsOpen(!isOpen)} className='m-2 inline-flex'>
@@ -168,32 +175,30 @@ const PlaylistsPage = () => {
                         {isOpen &&
                             <div className='absolute bg-spotify-light-dark text-white mt-2 font-semibold rounded' onMouseLeave={() => setIsOpen(false)} onClick={() => setIsOpen(false)}>
                                 <ul className='m-3 pt-1'>
-
                                 </ul>
                             </div>
                         }
                     </div>
                 </div>
                 {/* Tracks section */}
-                <table className='table-auto border-separate border-spacing-y-3 mt-6'>
-                    <thead className='text-spotify-light-gray'>
-                        <tr>
-                            <th className='text-left pl-6 text-xl'>#</th>
-                            <th className='text-left'>Title</th>
-                            <th className='text-left'>Album</th>
-                            <th className='text-left'>
-                                <BsClockHistory />
-                            </th>
-                        </tr>
-                    </thead>
-                    {playlistInfo.tracks.map((trackInfo, index) => {
-                        return (
-                            <TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} />
-                        )
-                    })}
-                </table>
+                {
+                    pageInfo.playlist.tracks.items.length !== 0 ?
+                        <table className='table-auto border-separate border-spacing-y-3 mt-6'>
+                            <UI.TrackListHeader />
+                            {pageInfo.playlist.tracks.items.map((trackInfo, index) => {
+                                return (
+                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} />
+                                    // <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} />
+                                )
+                            })}
+                        </table>
+                        : <div className='flex flex-col mt-10'>
+                            <p className='text-2xl font-bold text-white'>Let&rsquo;s find something for your playlist</p>
+                            {/* TODO: Inserire search bar per le canzoni */}
+                        </div>
+                }
                 <ToastContainer />
-            </div>
+            </div >
         )
     else return <LoadingPage />
 }

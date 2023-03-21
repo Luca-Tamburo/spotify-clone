@@ -8,7 +8,7 @@ import useGreeting from "@/hooks/useGreeting";
 
 // Components
 import LoadingPage from "./loading";
-import { PlaylistCard } from "@/components";
+import * as UI from '../../components/index'
 
 // Styles
 
@@ -25,24 +25,10 @@ const Home = () => {
         const newReleases = await spotifiApi.getNewReleases({ limit: 50, country: 'IT' })
 
         const playlists = {
-          featuredPlaylists: {
-            "infos": featPlaylists.body.playlists.items.map(playlist => ({
-              "id": playlist.id,
-              "name": playlist.name,
-              "images": playlist.images,
-              "description": playlist.description,
-            }))
-          },
-          newReleases: newReleases.body.albums.items.map(playlist => ({
-            "id": playlist.id,
-            "name": playlist.name,
-            "images": playlist.images,
-            "artistInfo": playlist.artists.map(artist => ({
-              "id": artist.id,
-              "name": artist.name,
-            })),
-          })),
+          "featuredPlaylists": featPlaylists.body.playlists.items,
+          "newReleases": newReleases.body.albums.items
         }
+
         setSuggestedPlaylists(playlists);
         setLoading(false);
       } catch (err) {
@@ -60,10 +46,10 @@ const Home = () => {
         <p className="text-2xl font-bold mt-4 ml-2">Selected For You</p>
         {/* Featured playlists section */}
         <div className="flex flex-wrap mt-4">
-          {suggestedPlaylists.featuredPlaylists.infos.map((playlistInfo, index) => {
+          {suggestedPlaylists.featuredPlaylists.map((playlistInfo, index) => {
             return (
               <div className='w-1/6 px-2' key={playlistInfo.id}>
-                <PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
+                <UI.Cards.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
               </div>
             )
           })}
@@ -75,7 +61,7 @@ const Home = () => {
           {suggestedPlaylists.newReleases.map((playlistInfo, index) => {
             return (
               <div className='w-1/6 px-2 mt-4' key={playlistInfo.id}>
-                <PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
+                <UI.Cards.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
               </div>
             )
           })}

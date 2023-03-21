@@ -1,7 +1,15 @@
+"use client"
 // Imports
-import React from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link'
 import Image from "next/image"
+import { useRouter } from 'next/navigation'
+
+// Hooks
+import useSpotify from '@/hooks/useSpotify'
+
+// Context
+import { DataContext } from '@/contexts/DataContext'
 
 // Icons
 import { AiFillHome } from 'react-icons/ai'
@@ -10,6 +18,19 @@ import { BsSearch, BsHeartFill } from 'react-icons/bs'
 import { RiAddBoxFill } from 'react-icons/ri'
 
 const SidebarLink = () => {
+    const spotifyApi = useSpotify();
+    const router = useRouter();
+    const [updateSidebar, setUpdateSidebar] = useContext(DataContext)
+
+    const handleCreatePlaylist = () => {
+        spotifyApi.createPlaylist('My playlist', { 'description': 'My description', 'public': true })
+            .then((data) => {
+                setUpdateSidebar(!updateSidebar);
+                router.push(`/playlist/${data.body.id}`);
+            })
+            .catch((err) => console.log('Something went wrong!', err))
+    }
+
     return (
         <div className='mt-6'>
             <Link href="/" className="inline-block">
@@ -37,7 +58,7 @@ const SidebarLink = () => {
             <Link href="" className=" hover:text-white">
                 <div className="flex hover:text-white mt-10" >
                     <RiAddBoxFill size={27} />
-                    <button className="ml-4 text-sm font-bold">Create Playlist</button>
+                    <button onClick={handleCreatePlaylist} className="ml-4 text-sm font-bold">Create Playlist</button>
                 </div>
             </Link>
             <Link href="/collection/tracks" className="hover:text-white">

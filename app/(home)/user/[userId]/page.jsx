@@ -32,25 +32,9 @@ const UserPage = () => {
                     userPlaylists: playlists.body.items.filter(it => it.owner.id === session.user.username),
                     userPlaylistsCounter: playlists.body.items.filter(it => it.owner.id === session.user.username).length,
                     userTopArtists: myTopArtists.body.items,
-                    userTopTracks: myTopTracks.body.items.map(track => ({
-                        "album": {
-                            "id": track.album.id,
-                            "name": track.album.name,
-                            "image": track.album.images[2].url,
-                        },
-                        "song": {
-                            "name": track.name,
-                            "image": track.album.images[2].url,
-                            "duration": track.duration_ms,
-                        },
-                        "artists": track.artists.map(artist => ({
-                            "id": artist.id,
-                            "name": artist.name,
-                        })),
-                        "explicit": track.explicit,
-                        "type": track.album.type
-                    }))
+                    userTopTracks: myTopTracks.body.items,
                 }
+
                 setAboutMe(personalData)
                 setLoading(false);
             } catch (err) {
@@ -101,7 +85,7 @@ const UserPage = () => {
                         {aboutMe.userTopArtists.map((artistInfo, index) => {
                             return (
                                 <div className='w-1/6 px-2' key={artistInfo.id}>
-                                    <UI.ArtistCard key={artistInfo.id} artistInfo={artistInfo} />
+                                    <UI.Cards.ArtistCard key={artistInfo.id} artistInfo={artistInfo} />
                                 </div>
                             )
                         })}
@@ -135,7 +119,7 @@ const UserPage = () => {
                         {aboutMe.userPlaylists.map((playlistInfo, index) => {
                             return (
                                 <div className='w-1/6 px-2' key={playlistInfo.id}>
-                                    <UI.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
+                                    <UI.Cards.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
                                 </div>
                             )
                         })}

@@ -1,18 +1,20 @@
 // Imports
-import ArtistCard from "./Cards/ArtistCard";
+import * as Cards from './Cards/index'
 import Footer from "./Footer";
 import Navbar from "./Navbar";
-import PlaylistCard from "./Cards/PlaylistCard";
 import Sidebar from "./Sidebar";
+import SidebarLink from './SidebarLink';
 import TracksList from "./TracksList";
+import TrackListHeader from './TrackListHeader';
 import UnLoggedIn from "./UnLoggedIn";
 
 export {
-    ArtistCard,
+    Cards,
     Footer,
     Navbar,
-    PlaylistCard,
     Sidebar,
+    SidebarLink,
     TracksList,
+    TrackListHeader,
     UnLoggedIn,
 }

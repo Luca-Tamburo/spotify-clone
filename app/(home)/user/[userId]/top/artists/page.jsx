@@ -8,7 +8,7 @@ import useSpotify from '@/hooks/useSpotify';
 
 // Components
 import Loading from '@/app/(home)/loading';
-import ArtistCard from '@/components/Cards/ArtistCard';
+import * as UI from '../../../../../../components/index'
 
 const TopArtistsPage = () => {
     const spotifyApi = useSpotify();
@@ -34,7 +34,7 @@ const TopArtistsPage = () => {
                     {userTopArtists.map((artistInfo, index) => {
                         return (
                             <div className='w-1/6 px-2 mb-7' key={artistInfo.id}>
-                                <ArtistCard key={artistInfo.id} artistInfo={artistInfo} />
+                                <UI.Cards.ArtistCard key={artistInfo.id} artistInfo={artistInfo} />
                             </div>
                         )
                     })}

@@ -11,7 +11,7 @@ import useSpotify from '@/hooks/useSpotify';
 
 // Components
 import Loading from '@/app/(home)/loading';
-import SidebarLink from "@/constants/SidebarLink";
+import * as UI from '../components/index'
 
 // Context
 import { DataContext } from "@/contexts/DataContext";
@@ -37,14 +37,14 @@ const Sidebar = () => {
         return (
             <div className="bg-black text-spotify-light-gray w-2/12 h-screen pl-6 fixed">
                 {/* First Section */}
-                <SidebarLink />
-                <hr className="w-11/12 mt-4" />
+                <UI.SidebarLink />
+                <hr className="w-10/12 mt-4" />
                 {/* Second Section */}
                 <div className="mt-4">
                     {userPlaylists.map((playlist, index) => {
                         return (
-                            <Link key={playlist.id} href={`/playlists/${playlist.id}`}>
-                                <p className="text-sm font-semibold mb-2 hover:text-white">{playlist.name}</p>
+                            <Link key={playlist.id} href={`/playlist/${playlist.id}`}>
+                                <p className="text-sm truncate font-semibold mb-2 mr-14 hover:text-white">{playlist.name}</p>
                             </Link>
                         )
                     })}
