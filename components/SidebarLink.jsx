@@ -14,7 +14,7 @@ import { DataContext } from '@/contexts/DataContext'
 // Icons
 import { AiFillHome } from 'react-icons/ai'
 import { BiLibrary } from 'react-icons/bi'
-import { BsSearch, BsHeartFill } from 'react-icons/bs'
+import { BsSearch, BsHeartFill, BsFillBookmarkFill } from 'react-icons/bs'
 import { RiAddBoxFill } from 'react-icons/ri'
 
 const SidebarLink = () => {
@@ -30,6 +30,8 @@ const SidebarLink = () => {
             })
             .catch((err) => console.log('Something went wrong!', err))
     }
+
+
 
     return (
         <div className='mt-6'>
@@ -63,8 +65,14 @@ const SidebarLink = () => {
             </Link>
             <Link href="/collection/tracks" className="hover:text-white">
                 <div className="flex hover:text-white mt-3" >
-                    <BsHeartFill size={25} />
+                    <BsHeartFill size={25} className="text-red-600" />
                     <p className="ml-4 text-sm font-bold">Liked Songs</p>
+                </div>
+            </Link>
+            <Link href="/collection/episodes" className="hover:text-white">
+                <div className="flex hover:text-white mt-3" >
+                    <BsFillBookmarkFill size={25} className="text-spotify-green" />
+                    <p className="ml-4 text-sm font-bold">Your Episodes</p>
                 </div>
             </Link>
         </div>

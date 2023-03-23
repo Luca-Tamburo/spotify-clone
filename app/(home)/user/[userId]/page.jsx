@@ -18,6 +18,7 @@ const UserPage = () => {
     const spotifyApi = useSpotify();
     const [aboutMe, setAboutMe] = useState(undefined);
     const [loading, setLoading] = useState(true);
+    const [updateLikedSong, setUpdateLikedSong] = useState(true);
 
     useEffect(() => {
         const handleLoading = async () => {
@@ -106,7 +107,7 @@ const UserPage = () => {
                         <table className='w-full table-auto border-separate border-spacing-y-3'>
                             {aboutMe.userTopTracks.map((trackInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} />
+                                    <UI.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} updateLikedSong={updateLikedSong} setUpdateLikedSong={setUpdateLikedSong} />
                                 )
                             })}
                         </table>
@@ -118,7 +119,7 @@ const UserPage = () => {
                     <div className='flex flex-wrap mt-4'>
                         {aboutMe.userPlaylists.map((playlistInfo, index) => {
                             return (
-                                <div className='w-1/6 px-2' key={playlistInfo.id}>
+                                <div className='w-1/6 px-2 mt-2' key={playlistInfo.id}>
                                     <UI.Cards.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
                                 </div>
                             )

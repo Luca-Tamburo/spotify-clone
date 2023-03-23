@@ -25,7 +25,7 @@ const ArtistCard = ({ artistInfo }) => {
                     alt="Card Image"
                     width={300}
                     height={300}
-                    className="rounded-full p-3"
+                    className="rounded-full p-4 w-44 h-44"
                 />
                 <p className='text-white font-bold mt-3 ml-4'>{artistInfo.name}</p>
                 <p className='text-sm text-spotify-light-gray font-semibold mt-1 ml-4'>{artistInfo.type.charAt(0).toUpperCase() + artistInfo.type.slice(1)}</p>

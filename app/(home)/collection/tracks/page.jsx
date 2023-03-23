@@ -1,15 +1,12 @@
 "use client"
 
 // Imports
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-
-// Context
-import { DataContext } from '@/contexts/DataContext';
 
 // Hooks
 import useSpotify from '@/hooks/useSpotify'
@@ -28,7 +25,7 @@ const LikedSongPage = () => {
     const [pageInfo, setPageInfo] = useState(undefined)
     const [loading, setLoading] = useState(true)
     const [likedSongs, setLikedSongs] = useState(undefined)
-    const [updateLikedSong, setUpdateLikedSong] = useContext(DataContext)
+    const [updateLikedSong, setUpdateLikedSong] = useState(true);
 
     useEffect(() => {
         const handleLoading = async () => {
@@ -93,7 +90,7 @@ const LikedSongPage = () => {
                             <UI.TrackListHeader />
                             {pageInfo.likedSongsList.map((trackInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} />
+                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
                                 )
                             })}
                         </table>

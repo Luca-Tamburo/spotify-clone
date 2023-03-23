@@ -1,12 +1,8 @@
-"use client"
 // Imports
 
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link';
-
-// Context
-import { DataContext } from '@/contexts/DataContext';
 
 // Hooks
 import useSpotify from '@/hooks/useSpotify';
@@ -16,12 +12,11 @@ import useNotification from '@/hooks/useNotification';
 import { TbSquareLetterE } from 'react-icons/tb'
 import { BsHeartFill, BsHeart, BsFillPlayFill } from 'react-icons/bs'
 
-const TracksList = ({ index, trackInfo, likedSongs }) => {
+const TracksList = ({ index, trackInfo, likedSongs, setUpdateLikedSong, updateLikedSong }) => {
     const spotifyApi = useSpotify();
     const notify = useNotification();
 
     const [isHovering, setIsHovering] = useState(false);
-    const [updateLikedSong, setUpdateLikedSong] = useContext(DataContext)
 
     const handleMouseEnter = () => {
         setIsHovering(true);

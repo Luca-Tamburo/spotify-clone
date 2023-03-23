@@ -30,3 +30,5 @@ yarn-error.log*
 
 # vercel
 .vercel
+components/EpisodeList.jsx
+app/(home)/collection/episodes/page.jsx

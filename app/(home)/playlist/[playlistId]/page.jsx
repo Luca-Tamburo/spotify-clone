@@ -33,7 +33,6 @@ const PlaylistsPage = () => {
     const playlistId = url.split('/')[2]
 
     const [updateSidebar, setUpdateSidebar] = useContext(DataContext)
-    const [updateLikedSong, setUpdateLikedSong] = useContext(DataContext)
 
     const [loading, setLoading] = useState(true);
     const [pageInfo, setPageInfo] = useState(undefined);
@@ -41,6 +40,7 @@ const PlaylistsPage = () => {
     const [isFollowed, setIsFollowed] = useState(false);
     const [duration, setDuration] = useState(undefined)
     const [likedSongs, setLikedSongs] = useState([undefined]);
+    const [updateLikedSong, setUpdateLikedSong] = useState(true);
 
     const handleAddFollow = (playlistId) => {
         spotifyApi.followPlaylist(playlistId, { 'public': true })
@@ -74,6 +74,7 @@ const PlaylistsPage = () => {
                 const checkFollowPlaylists = await spotifyApi.areFollowingPlaylist(playlistInfo.body.owner.id, playlistId, [session.user.username])
 
                 if (playlistInfo.body.tracks.items.length !== 0) {
+
                     const first50SongIds = playlistInfo.body.tracks.items.map(it => ([it.track.id])).slice(0, 50)
                     const second50SongIds = playlistInfo.body.tracks.items.map(it => ([it.track.id])).slice(51, 100)
 
@@ -187,8 +188,7 @@ const PlaylistsPage = () => {
                             <UI.TrackListHeader />
                             {pageInfo.playlist.tracks.items.map((trackInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} />
-                                    // <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} />
+                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
                                 )
                             })}
                         </table>
