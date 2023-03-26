@@ -56,13 +56,10 @@ const SidebarLink = () => {
                     <p className="ml-4 text-sm font-bold">Your Library</p>
                 </div>
             </Link>
-            {/* TODO: Sistemare, inserendo come path, il l'url generato dall'onCLick del button */}
-            <Link href="" className=" hover:text-white">
-                <div className="flex hover:text-white mt-10" >
-                    <RiAddBoxFill size={27} />
-                    <button onClick={handleCreatePlaylist} className="ml-4 text-sm font-bold">Create Playlist</button>
-                </div>
-            </Link>
+            <div className="flex hover:text-white mt-10" >
+                <RiAddBoxFill size={27} />
+                <button onClick={handleCreatePlaylist} className="ml-4 text-sm font-bold">Create Playlist</button>
+            </div>
             <Link href="/collection/tracks" className="hover:text-white">
                 <div className="flex hover:text-white mt-3" >
                     <BsHeartFill size={25} className="text-red-600" />

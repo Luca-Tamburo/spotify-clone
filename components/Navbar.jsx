@@ -3,7 +3,7 @@
 // Imports
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useSession, signOut } from "next-auth/react"
 
@@ -11,7 +11,7 @@ import { useSession, signOut } from "next-auth/react"
 import LoadingPage from '@/app/(home)/loading';
 
 // Constants
-import DropdownLinks from '@/constants/DropdownMenu';
+import * as Constant from '../constants/index'
 
 // Hooks
 import useSpotify from '@/hooks/useSpotify';
@@ -22,10 +22,14 @@ import { IoIosArrowForward, IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from 
 const Navbar = () => {
     const { data: session } = useSession();
     const router = useRouter();
+    const pathname = usePathname();
     const spotifyApi = useSpotify();
     const [isOpen, setIsOpen] = useState(false);
     const [isPremium, setIsPremium] = useState(true);
+    const [activeLink, setActiveLink] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const possibleUrls = ['/collection/playlists', '/collection/podcasts', '/collection/artists', '/collection/albums']
 
     useEffect(() => {
         spotifyApi.getMe()
@@ -50,6 +54,9 @@ const Navbar = () => {
         router.forward();
     }
 
+    const handleClick = (index) => {
+        setActiveLink(index);
+    };
 
     if (!loading)
         return (
@@ -75,6 +82,19 @@ const Navbar = () => {
                                 <IoIosArrowForward size={35} className='bg-black rounded-full ml-2 pl-1' />
                             </button>
                         </>
+                    }
+                </div>
+                <div className='flex'>
+                    {possibleUrls.includes(pathname) &&
+                        Constant.NavbarLinks.map((link) => {
+                            return (
+                                <Link key={link.id} href={link.url}>
+                                    <p className={`${activeLink === link.id ? 'bg-[#333333]' : "bg-black"} text-white text-sm font-bold mt-4 mx-3 mb-2 p-3 rounded-md`} onClick={() => handleClick(link.id)}>
+                                        {link.text}
+                                    </p>
+                                </Link >
+                            )
+                        })
                     }
                 </div>
                 <div className='flex mr-7 my-2'>
@@ -104,7 +124,7 @@ const Navbar = () => {
                                             <li className='hover:bg-spotify-gray'>
                                                 <Link href={linkUserPage}>Profile</Link>
                                             </li>
-                                            {DropdownLinks.map((link) => (
+                                            {Constant.DropdownLinks.map((link) => (
                                                 <li key={link.id} className='my-3 py-1 hover:bg-spotify-gray'>
                                                     <a href={link.url} target="_blank" rel="noopener noreferrer">
                                                         <p className=''>{link.text}</p>

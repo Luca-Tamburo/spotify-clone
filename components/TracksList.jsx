@@ -20,17 +20,18 @@ const TracksList = ({ index, trackInfo, likedSongs, setUpdateLikedSong, updateLi
 
     const handleMouseEnter = () => {
         setIsHovering(true);
-        setUpdateLikedSong(!updateLikedSong);
     };
 
     const handleMouseLeave = () => {
         setIsHovering(false);
-        setUpdateLikedSong(!updateLikedSong);
     };
 
     const handleAddLikeToSong = (trackId) => {
         spotifyApi.addToMySavedTracks(trackId)
-            .then(() => notify.success("Added to Your Liked Songs"))
+            .then(() => {
+                notify.success("Added to Your Liked Songs");
+                setUpdateLikedSong(!updateLikedSong);
+            })
             .catch((err) => {
                 notify.error("Error! Try again");
                 console.log('Something went wrong!', err);
@@ -39,7 +40,10 @@ const TracksList = ({ index, trackInfo, likedSongs, setUpdateLikedSong, updateLi
 
     const handleRemoveLikeToSong = (trackId) => {
         spotifyApi.removeFromMySavedTracks(trackId)
-            .then(() => notify.success("Removed from Your Liked Songs"))
+            .then(() => {
+                notify.success("Removed from Your Liked Songs")
+                setUpdateLikedSong(!updateLikedSong);
+            })
             .catch((err) => {
                 notify.error("Error! Try again");
                 console.log('Something went wrong!', err);

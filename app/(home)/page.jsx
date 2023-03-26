@@ -57,7 +57,6 @@ const Home = () => {
         {/* New Release playlists section */}
         <p className="text-2xl font-bold mt-6 ml-2">New Releases</p>
         <div className="flex flex-wrap mt-1">
-          {/* TODO: Fare un componente albumCard che abbia il link component a /album */}
           {suggestedPlaylists.newReleases.map((playlistInfo, index) => {
             return (
               <div className='w-1/6 px-2 mt-4' key={playlistInfo.id}>

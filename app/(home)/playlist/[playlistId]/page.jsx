@@ -193,8 +193,9 @@ const PlaylistsPage = () => {
                             })}
                         </table>
                         : <div className='flex flex-col mt-10'>
-                            <p className='text-2xl font-bold text-white'>Let&rsquo;s find something for your playlist</p>
-                            {/* TODO: Inserire search bar per le canzoni */}
+                            <p className='text-xl font-bold text-white'>Let&rsquo;s find something for your playlist</p>
+                            {/* TODO: Aggiungere API per la ricerca */}
+                            <input type="search" placeholder='Search for songs or episodes' className='placeholder:text-spotify-light-gray font-semibold rounded-md border-none bg-[#2C2C2C] mt-3 w-[22rem]' />
                         </div>
                 }
                 <ToastContainer />

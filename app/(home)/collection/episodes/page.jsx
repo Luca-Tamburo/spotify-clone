@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { useSession } from "next-auth/react"
 
 // Hooks
 import useSpotify from '@/hooks/useSpotify'
@@ -16,32 +17,43 @@ import LoadingPage from '../../loading'
 import * as UI from '../../../../components/index'
 
 // Styles
-import { BsHeartFill, BsMusicNote, BsFillPlayCircleFill } from 'react-icons/bs'
+import { BsFillPlayCircleFill, BsFillBookmarkFill } from 'react-icons/bs'
 import { MdHideImage } from 'react-icons/md'
+import { TbCirclePlus } from 'react-icons/tb'
 
-const LikedSongPage = () => {
+const EpisodesPage = () => {
+    const axios = require('axios');
+    const { data: session } = useSession();
     const spotify = useSpotify();
     const route = useRouter();
+
     const [pageInfo, setPageInfo] = useState(undefined)
+    const [likedEpisodes, setLikedEpisodes] = useState(undefined)
+    const [updateLikedEpisodes, setUpdateLikedEpisodes] = useState(true);
     const [loading, setLoading] = useState(true)
-    const [likedSongs, setLikedSongs] = useState(undefined)
-    const [updateLikedSong, setUpdateLikedSong] = useState(true);
 
     useEffect(() => {
         const handleLoading = async () => {
             try {
                 const userInfo = await spotify.getMe();
-                const likedSongs = await spotify.getMySavedTracks({ limit: 50 })
 
-                const likedSongsId = likedSongs.body.items.map(it => [it.track.id])
+                const response = await axios.get('https://api.spotify.com/v1/me/episodes', {
+                    headers: {
+                        'Authorization': `Bearer ${session.user.accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const likedEpisodesId = response.data.items.map(it => [it.episode.id])
 
                 const infos = {
                     userInfo: userInfo.body,
-                    likedSongsList: likedSongs.body.items,
+                    episodesInfo: response.data.items,
                 }
 
                 setPageInfo(infos)
-                setLikedSongs(likedSongsId)
+                setLikedEpisodes(likedEpisodesId)
                 setLoading(false)
 
             } catch (err) {
@@ -49,19 +61,19 @@ const LikedSongPage = () => {
             }
         }
         handleLoading()
-    }, [updateLikedSong])
+    }, [updateLikedEpisodes])
 
     if (!loading)
         return (
             <div className='flex flex-col'>
                 {/* Liked Song Info Section */}
-                <div className='flex bg-gradient-to-t from-[#2C1F56] to-[#50399A] p-6'>
-                    <div className='flex justify-center items-center bg-gradient-to-r from-[#3F13B9] to-[#7b9187] w-56 h-56'>
-                        <BsHeartFill size={70} className="text-white" />
+                <div className='flex bg-gradient-to-t from-[#03352B] to-[#065E4C] p-6'>
+                    <div className='flex justify-center items-center rounded drop-shadow-2xl bg-[#056952] w-56 h-56'>
+                        <BsFillBookmarkFill size={70} className="text-spotify-green" />
                     </div>
                     <div className='flex flex-col text-white font-bold mt-10 ml-5'>
                         <p>Playlist</p>
-                        <p className='text-8xl mt-4 mb-5'>Liked Songs</p>
+                        <p className='text-8xl mt-4 mb-5'>Your Episodes</p>
                         <div className='flex'>
                             {pageInfo.userInfo.images[0].url ?
                                 <Image
@@ -75,32 +87,32 @@ const LikedSongPage = () => {
                             <Link href={`/user/${pageInfo.userInfo.id}`}>
                                 <span className='text-white text-sm font-bold hover:underline mx-2'>{pageInfo.userInfo.display_name}</span>
                             </Link>
-                            {pageInfo.likedSongsList.length !== 0 && <p className='font-semibold'>&bull; {pageInfo.likedSongsList.length} song</p>}
+                            {pageInfo.episodesInfo.length !== 0 && <p className='font-semibold'>&bull; {pageInfo.episodesInfo.length} episodes</p>}
                         </div>
                     </div>
                 </div>
                 {/* Liked Song List Section */}
-                {pageInfo.likedSongsList.length !== 0 ?
-                    <div className='flex flex-col bg-gradient-to-b from-[#21173F] to-spotify-dark'>
+                {pageInfo.episodesInfo.length !== 0 ?
+                    <div className='flex flex-col bg-gradient-to-b from-[#032821] to-spotify-dark'>
                         <button className='text-spotify-green rounded-full'>
                             <BsFillPlayCircleFill size={60} className="mt-6 ml-8 hover:scale-105" />
                         </button>
-                        <table className='table-auto border-separate border-spacing-y-3 pt-6 pl-6 pr-6'>
-                            <UI.TrackListHeader />
-                            {pageInfo.likedSongsList.map((trackInfo, index) => {
+                        <div className='mt-10 ml-7'>
+                            {pageInfo.episodesInfo.map((episodeInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
+                                    <UI.EpisodeList key={episodeInfo.id} episodeInfo={episodeInfo.episode} likedEpisodes={likedEpisodes[index]} setUpdateLikedEpisodes={setUpdateLikedEpisodes} updateLikedEpisodes={updateLikedEpisodes} />
                                 )
                             })}
-                        </table>
+                        </div>
                     </div>
                     :
-                    <div className='flex flex-col justify-center items-center bg-gradient-to-b from-[#21173F] to-spotify-dark text-white'>
-                        <BsMusicNote size={50} className='mt-10' />
-                        <p className='text-3xl font-bold my-8'>Songs you like will appear here</p>
-                        <p className='font-semibold mb-8'>Save songs by tapping the heart icon.</p>
+                    <div className='flex flex-col justify-center items-center bg-gradient-to-b from-[#032720] to-spotify-dark text-white'>
+                        <TbCirclePlus size={70} className='mt-10' />
+                        <p className='text-3xl font-bold my-8'>Add to Your Episodes</p>
+                        <p className='font-semibold mb-8'>Save episodes to this playlist by tapping the plus icon.</p>
+                        {/* TODO: Capire se si può reindirizzare a /genre/podcasts-web */}
                         <button className='bg-white hover:scale-105 rounded-full' onClick={() => { route.push('/search') }}>
-                            <p className='text-black font-bold py-3 px-8'>Find songs</p>
+                            <p className='text-black font-bold py-3 px-8'>Find podcasts</p>
                         </button>
                     </div>
                 }
@@ -110,4 +122,4 @@ const LikedSongPage = () => {
     else return <LoadingPage />
 }
 
-export default LikedSongPage
+export default EpisodesPage

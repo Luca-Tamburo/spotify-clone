@@ -24,7 +24,6 @@ const PodcastPage = () => {
             .finally(() => setLoading(false))
     }, [])
 
-    console.log(userPodcast);
     if (!loading)
         return (
             <div className='flex flex-col bg-spotify-dark pt-4 px-9'>

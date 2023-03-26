@@ -9,7 +9,6 @@ import { MdHideImage } from 'react-icons/md'
 
 const PlaylistCard = ({ playlistInfo }) => {
 
-    console.log(playlistInfo);
     const [isHovering, setIsHovering] = useState(false);
 
     const handleMouseEnter = () => {
