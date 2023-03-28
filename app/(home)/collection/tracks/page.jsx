@@ -86,10 +86,10 @@ const LikedSongPage = () => {
                             <BsFillPlayCircleFill size={60} className="mt-6 ml-8 hover:scale-105" />
                         </button>
                         <table className='table-auto border-separate border-spacing-y-3 pt-6 pl-6 pr-6'>
-                            <UI.TrackListHeader />
+                            <UI.TrackLists.TrackListHeader />
                             {pageInfo.likedSongsList.map((trackInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
+                                    <UI.TrackLists.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
                                 )
                             })}
                         </table>

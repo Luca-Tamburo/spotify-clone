@@ -150,7 +150,10 @@ const PlaylistsPage = () => {
                             <span className='text-white'>&bull;</span>
                             <span className='text-white text-sm font-semibold mx-1'>{pageInfo.playlist.followers.total}{' '}likes</span>
                             <span className='text-white'>&bull;</span>
-                            <span className='text-white text-sm font-semibold mx-1'>{pageInfo.playlist.tracks.items.length}{' '}songs,</span>
+                            {pageInfo.playlist.tracks.items.length === 1 ?
+                                <p className='text-sm'>{pageInfo.playlist.tracks.items.length} song,</p>
+                                : <p className='text-sm'>{pageInfo.playlist.tracks.items.length} songs,</p>
+                            }
                             <span className='text-spotify-light-gray text-sm font-semibold'>about {duration}</span>
                         </div>
                     </div>
@@ -185,10 +188,10 @@ const PlaylistsPage = () => {
                 {
                     pageInfo.playlist.tracks.items.length !== 0 ?
                         <table className='table-auto border-separate border-spacing-y-3 mt-6'>
-                            <UI.TrackListHeader />
+                            <UI.TrackLists.TrackListHeader />
                             {pageInfo.playlist.tracks.items.map((trackInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
+                                    <UI.TrackLists.TracksList key={trackInfo.track.id} trackInfo={trackInfo.track} index={index} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
                                 )
                             })}
                         </table>
