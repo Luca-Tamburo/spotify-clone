@@ -16,6 +16,7 @@ import { BsPlayCircleFill, BsCheckCircleFill, BsThreeDots } from 'react-icons/bs
 import { TbShare2, TbCirclePlus } from 'react-icons/tb'
 
 const EpisodeList = ({ episodeInfo, likedEpisodes, setUpdateLikedEpisodes, updateLikedEpisodes }) => {
+
     const { data: session } = useSession();
     const notify = useNotification();
     const [isHovering, setIsHovering] = useState(false);
@@ -72,7 +73,7 @@ const EpisodeList = ({ episodeInfo, likedEpisodes, setUpdateLikedEpisodes, updat
     const seconds = Math.floor((episodeInfo.duration_ms % 60000) / 1000).toFixed(0);
 
     return (
-        <div className='flex hover:bg-[#444444] p-3 rounded-lg w-10/12' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <div className='flex hover:bg-[#444444] p-3 rounded-lg' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <Image
                 src={episodeInfo.images[0].url}
                 alt="Episode Image"
@@ -86,11 +87,13 @@ const EpisodeList = ({ episodeInfo, likedEpisodes, setUpdateLikedEpisodes, updat
                         {episodeInfo.name}
                     </p>
                 </Link>
-                <Link href={`/show/${episodeInfo.show.id}`}>
-                    <p className='text-white font-bold hover:underline'>
-                        {episodeInfo.show.name}
-                    </p>
-                </Link>
+                {episodeInfo.show &&
+                    <Link href={`/show/${episodeInfo.show.id}`}>
+                        <p className='text-white font-bold hover:underline'>
+                            {episodeInfo.show.name}
+                        </p>
+                    </Link>
+                }
                 <p className='text-sm truncate text-spotify-light-gray font-semibold my-2'>{episodeInfo.description}</p>
                 <div className='flex justify-between mt-4'>
                     <div className='flex'>
@@ -107,12 +110,12 @@ const EpisodeList = ({ episodeInfo, likedEpisodes, setUpdateLikedEpisodes, updat
                         </button>
                         {
                             likedEpisodes ?
-                                <button className='hover:text-white hover:scale-105' onClick={() => handleRemoveLikeToEpisode(episodeInfo.id)}>
+                                <button className='hover:text-white hover:scale-105' onClick={() => handleRemoveLikeToEpisode([episodeInfo.id])}>
                                     <BsCheckCircleFill size={25} className='text-spotify-green mx-5' />
                                 </button>
                                 :
-                                <button className='hover:text-white hover:scale-105' onClick={() => handleAddLikeToEpisode(episodeInfo.id)}>
-                                    <TbCirclePlus size={25} />
+                                <button className='hover:text-white hover:scale-105' onClick={() => handleAddLikeToEpisode([episodeInfo.id])}>
+                                    <TbCirclePlus size={25} className='text-spotify-light-gray mx-5' />
                                 </button>
                         }
                         <button className='hover:text-white hover:scale-105'>

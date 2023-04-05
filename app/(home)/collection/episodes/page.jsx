@@ -97,7 +97,7 @@ const EpisodesPage = () => {
                         <button className='text-spotify-green rounded-full'>
                             <BsFillPlayCircleFill size={60} className="mt-6 ml-8 hover:scale-105" />
                         </button>
-                        <div className='mt-10 ml-7'>
+                        <div className='mt-10 ml-7 w-10/12'>
                             {pageInfo.episodesInfo.map((episodeInfo, index) => {
                                 return (
                                     <UI.EpisodeList key={episodeInfo.id} episodeInfo={episodeInfo.episode} likedEpisodes={likedEpisodes[index]} setUpdateLikedEpisodes={setUpdateLikedEpisodes} updateLikedEpisodes={updateLikedEpisodes} />
