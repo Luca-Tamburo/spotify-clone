@@ -38,7 +38,7 @@ const AlbumPage = () => {
                             {userAlbums.map((albumInfo, index) => {
                                 return (
                                     <div className='w-1/6 mt-4' key={albumInfo.id}>
-                                        <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
+                                        <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo.album} />
                                     </div>
                                 )
                             })}

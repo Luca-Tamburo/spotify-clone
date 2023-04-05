@@ -47,7 +47,7 @@ const TopTracksPage = () => {
           </thead>
           {userTopTracks.map((trackInfo, index) => {
             return (
-              <UI.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} />
+              <UI.TrackLists.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} />
             )
           })}
         </table>

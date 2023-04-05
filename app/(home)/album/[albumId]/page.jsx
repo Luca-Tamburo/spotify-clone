@@ -80,10 +80,6 @@ const AlbumPage = () => {
                     artistRelatedArtists: artistRelatedArtists.body.artists.slice(0, 6)
                 }
 
-                console.log(pageData);
-
-                console.log(pageData.artistRelatedArtists);
-
                 const totalDurationms = pageData.albumInfo.tracks.items.map(it => ({
                     "duration": it.duration_ms
                 })).reduce((accumulator, currentTrack) => accumulator + currentTrack.duration, 0);
@@ -198,7 +194,6 @@ const AlbumPage = () => {
                 </div>
                 {/* Fans Also Like section */}
                 <div className='flex flex-col mx-8 mt-4'>
-                    {/* TODO: Fare questa pagina */}
                     <div className='flex justify-between'>
                         <Link href={`/artist/${pageInfo.artistsInfo.artists[0].id}/related`}><p className='text-white text-2xl font-bold hover:underline'>Fans also like</p></Link>
                         <Link href={`/artist/${pageInfo.artistsInfo.artists[0].id}/related`}><p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p></Link>

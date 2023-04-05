@@ -135,7 +135,7 @@ const PlaylistsPage = () => {
                         <p className={`${pageInfo.playlist.name.length >= 20 ? "text-3xl" : "text-7xl"} text-white font-bold mt-4`}>{pageInfo.playlist.name}</p>
                         <div className='mt-4'>
                             <p className='text-sm font-semibold text-spotify-light-gray mt-4 mb-2'>{pageInfo.playlist.description}</p>
-                            {pageInfo.authorInfo.images[0].url &&
+                            {pageInfo.authorInfo.images[0] &&
                                 <Image
                                     src={pageInfo.authorInfo.images[0].url}
                                     alt="User Profile Image"
@@ -151,8 +151,8 @@ const PlaylistsPage = () => {
                             <span className='text-white text-sm font-semibold mx-1'>{pageInfo.playlist.followers.total}{' '}likes</span>
                             <span className='text-white'>&bull;</span>
                             {pageInfo.playlist.tracks.items.length === 1 ?
-                                <p className='text-sm'>{pageInfo.playlist.tracks.items.length} song,</p>
-                                : <p className='text-sm'>{pageInfo.playlist.tracks.items.length} songs,</p>
+                                <span className='text-sm text-white font-semibold mx-1'>{pageInfo.playlist.tracks.items.length} song,</span>
+                                : <span className='text-sm text-white font-semibold mx-1'>{pageInfo.playlist.tracks.items.length} songs,</span>
                             }
                             <span className='text-spotify-light-gray text-sm font-semibold'>about {duration}</span>
                         </div>

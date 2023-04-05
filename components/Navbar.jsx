@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSession, signOut } from "next-auth/react"
 
 // Components
@@ -24,12 +24,34 @@ const Navbar = () => {
     const router = useRouter();
     const pathname = usePathname();
     const spotifyApi = useSpotify();
+    const clickPoint = useRef();
     const [isOpen, setIsOpen] = useState(false);
     const [isPremium, setIsPremium] = useState(true);
     const [activeLink, setActiveLink] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const possibleUrls = ['/collection/playlists', '/collection/podcasts', '/collection/artists', '/collection/albums']
+
+    const isSearchPage = pathname.includes("/search");
+
+    const handleFocus = () => { clickPoint.current.style.display = "none"; };
+
+    const handleBlur = () => { clickPoint.current.style.display = "block"; };
+
+    const linkUserPage = "/user/" + `${session.user.username}`;
+
+    const handleGoBack = () => { router.back(); }
+
+    const handleGoForward = () => { router.forward(); }
+
+    const handleClick = (index) => { setActiveLink(index); };
+
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        router.push(`/search/${searchTerm}`);
+    }
 
     useEffect(() => {
         spotifyApi.getMe()
@@ -43,20 +65,6 @@ const Navbar = () => {
             })
             .finally(() => setLoading(false));
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-    const linkUserPage = "/user/" + `${session.user.username}`;
-
-    const handleGoBack = () => {
-        router.back();
-    }
-
-    const handleGoForward = () => {
-        router.forward();
-    }
-
-    const handleClick = (index) => {
-        setActiveLink(index);
-    };
 
     if (!loading)
         return (
@@ -97,10 +105,33 @@ const Navbar = () => {
                         })
                     }
                 </div>
+                <div className='flex'>
+                    {isSearchPage &&
+                        <form onSubmit={handleSubmit}>
+                            <div className="items-center px-4 flex justify-center mt-3" >
+                                <div className="relative mr-3">
+                                    <div className="absolute top-3 left-3 items-center" ref={clickPoint}>
+                                        <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="block p-2 pl-10 w-70 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:pl-3"
+                                        placeholder="Search Here..."
+                                        onFocus={handleFocus}
+                                        onBlur={handleBlur}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <button type="submit">Search</button>
+                            </div>
+                        </form>
+                    }
+                </div>
                 <div className='flex mr-7 my-2'>
                     {session &&
                         <>
-                            {!isPremium && <button className='text-white hover:scale-110 mt-3 mr-3'>
+                            {!isPremium && <button className='text-white hover:scale-110 mt-2 mr-2'>
                                 <a href='https://www.spotify.com/it/premium/?utm_source=app&utm_medium=desktop&utm_campaign=upgrade&ref=web_loggedin_upgrade_button' target="_blank" rel="noopener noreferrer" className='font-bold mx-2'>
                                     Premium Plans
                                 </a>

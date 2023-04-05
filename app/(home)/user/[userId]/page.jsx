@@ -107,7 +107,7 @@ const UserPage = () => {
                         <table className='w-full table-auto border-separate border-spacing-y-3'>
                             {aboutMe.userTopTracks.map((trackInfo, index) => {
                                 return (
-                                    <UI.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} updateLikedSong={updateLikedSong} setUpdateLikedSong={setUpdateLikedSong} />
+                                    <UI.TrackLists.TracksList key={trackInfo.id} trackInfo={trackInfo} index={index} updateLikedSong={updateLikedSong} setUpdateLikedSong={setUpdateLikedSong} />
                                 )
                             })}
                         </table>

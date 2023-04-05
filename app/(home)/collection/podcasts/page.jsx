@@ -31,8 +31,8 @@ const PodcastPage = () => {
                 <div className='flex flex-wrap'>
                     {userPodcast.items.map((podcastInfo, index) => {
                         return (
-                            <div className='w-1/6 mt-4' key={podcastInfo.id}>
-                                <UI.Cards.PodcastCard key={podcastInfo.id} podcastInfo={podcastInfo} />
+                            <div className='w-1/6 mt-4' key={podcastInfo.show.id}>
+                                <UI.Cards.PodcastCard key={podcastInfo.show.id} podcastInfo={podcastInfo.show} />
                             </div>
                         )
                     })}
