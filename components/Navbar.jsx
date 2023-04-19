@@ -18,6 +18,7 @@ import useSpotify from '@/hooks/useSpotify';
 
 // Styles
 import { IoIosArrowForward, IoIosArrowBack, IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
+import { MdHideImage } from 'react-icons/md';
 
 const Navbar = () => {
     const { data: session } = useSession();
@@ -25,6 +26,7 @@ const Navbar = () => {
     const pathname = usePathname();
     const spotifyApi = useSpotify();
     const clickPoint = useRef();
+    const [pageInfo, setPageInfo] = useState(undefined);
     const [isOpen, setIsOpen] = useState(false);
     const [isPremium, setIsPremium] = useState(true);
     const [activeLink, setActiveLink] = useState(null);
@@ -56,6 +58,7 @@ const Navbar = () => {
     useEffect(() => {
         spotifyApi.getMe()
             .then((data) => {
+                setPageInfo(data.body);
                 if (data.body.product.toLocaleLowerCase() === "free")
                     setIsPremium(false)
                 else
@@ -139,14 +142,16 @@ const Navbar = () => {
                             }
                             <div className='relative text-white bg-black hover:bg-spotify-light-dark mt-3 rounded-full'>
                                 <button onClick={() => setIsOpen(!isOpen)} className='m-2 inline-flex'>
-                                    <Image
-                                        src={session.user.image}
-                                        alt="User profile image"
-                                        width={25}
-                                        height={25}
-                                        style={{ borderRadius: '50%' }}
-                                    />
-                                    <span className='ml-2 font-bold'>{session.user.name}</span>
+                                    {pageInfo.images.length === 0 ? <MdHideImage size={25} /> :
+                                        <Image
+                                            src={pageInfo.images[0].url}
+                                            alt="User profile image"
+                                            width={25}
+                                            height={25}
+                                            style={{ borderRadius: '50%' }}
+                                        />
+                                    }
+                                    <span className='ml-2 font-bold'>{pageInfo.display_name}</span>
                                     {isOpen ? <IoIosArrowUp className='mt-1.5 ml-1.5' /> : < IoIosArrowDown className='mt-1.5 ml-1.5' />}
                                 </button>
                                 {isOpen &&

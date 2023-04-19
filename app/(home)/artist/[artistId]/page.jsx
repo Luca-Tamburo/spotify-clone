@@ -64,7 +64,7 @@ const ArtistPage = () => {
                     artistInfo: artist.body,
                     popularTrack: popular.body.tracks.slice(0, 5),
                     artistAlbums: album.body.items.slice(0, 6),
-                    // appearsOn: album.body.items.filter(it => it.album_group = "appears_on"),
+                    appearsOn: album.body.items.filter(it => it.album_group === "appears_on"),
                     artistRelatedArtists: artistRelatedArtists.body.artists.slice(0, 6)
                 }
 
@@ -161,7 +161,7 @@ const ArtistPage = () => {
                         </div>
                     </div>
                     {/* Appears On Section */}
-                    {/* <div className='flex flex-col mt-6'>
+                    <div className='flex flex-col mt-6'>
                         <div className='flex justify-between'>
                             <Link href={`/artist/${artistId}/appears-on`}><p className='text-white text-2xl font-bold hover:underline'>Appears on</p></Link>
                             <Link href={`/artist/${artistId}/appears-on`}><p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p></Link>
@@ -175,7 +175,7 @@ const ArtistPage = () => {
                                 )
                             })}
                         </div>
-                    </div> */}
+                    </div>
                 </div>
                 <ToastContainer />
             </div >

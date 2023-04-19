@@ -71,7 +71,9 @@ const TracksList = ({ index, trackInfo, likedSongs, setUpdateLikedSong, updateLi
                             className="mr-3"
                         />
                         <div className='flex flex-col'>
-                            <p className='text-white'>{trackInfo.name}</p>
+                            <Link href={`/track/${trackInfo.id}`} key={trackInfo.id} className="hover:underline">
+                                <p className='text-white'>{trackInfo.name}</p>
+                            </Link>
                             <div className='flex'>
                                 {trackInfo.explicit && <TbSquareLetterE className='mt-1 mr-2' size={18} />}
                                 {trackInfo.artists.length === 1 ?

@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import copy from 'copy-to-clipboard';
 
 // Hooks
 import useSpotify from '@/hooks/useSpotify';
@@ -64,6 +65,11 @@ const PlaylistsPage = () => {
             .catch(() => {
                 notify.error("Error! Try again")
             })
+    }
+
+    const handleShareLink = () => {
+        copy(`https://spotify-clone-six-beta.vercel.app/playlist/${playlistId}`);
+        notify.success("Link copied to clipboard")
     }
 
     useEffect(() => {
@@ -178,7 +184,10 @@ const PlaylistsPage = () => {
                         </button>
                         {isOpen &&
                             <div className='absolute bg-spotify-light-dark text-white mt-2 font-semibold rounded' onMouseLeave={() => setIsOpen(false)} onClick={() => setIsOpen(false)}>
-                                <ul className='m-3 pt-1'>
+                                <ul className='pt-2 pl-2 pb-2 pr-1 w-40'>
+                                    <li className='hover:bg-spotify-gray rounded'><button>Add to queue</button></li>
+                                    <li className='my-3 hover:bg-spotify-gray rounded'><button onClick={() => handleAddFollow(pageInfo.playlist.id)}>Add to your library</button></li>
+                                    <li className='hover:bg-spotify-gray rounded'><button onClick={handleShareLink}>Copy link to playlist</button></li>
                                 </ul>
                             </div>
                         }
