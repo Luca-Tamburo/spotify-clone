@@ -127,55 +127,67 @@ const ArtistPage = () => {
                 </div >
                 {/* Discography Section */}
                 <div className='flex flex-col mt-6'>
-                    <div className='flex justify-between'>
-                        <Link href={`/artist/${artistId}/discography/all`}>
-                            <p className='text-white font-bold text-2xl hover:underline'>Discography</p>
-                        </Link>
-                        <Link href={`/artist/${artistId}/discography/all`}>
-                            <p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p>
-                        </Link>
-                    </div>
-                    <div className='flex mt-4'>
-                        {pageInfo.artistAlbums.map((albumInfo, index) => {
-                            return (
-                                <div key={albumInfo.id} className=' w-1/6'>
-                                    <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
-                                </div>
-                            )
-                        })}
-                    </div>
+                    {pageInfo.artistAlbums.length !== 0 &&
+                        <>
+                            <div className='flex justify-between'>
+                                <Link href={`/artist/${artistId}/discography/all`}>
+                                    <p className='text-white font-bold text-2xl hover:underline'>Discography</p>
+                                </Link>
+                                <Link href={`/artist/${artistId}/discography/all`}>
+                                    <p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p>
+                                </Link>
+                            </div>
+                            <div className='flex mt-4'>
+                                {pageInfo.artistAlbums.map((albumInfo, index) => {
+                                    return (
+                                        <div key={albumInfo.id} className=' w-1/6'>
+                                            <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                    }
                     {/* Fans Also Like Section */}
-                    <div className='flex flex-col mt-6'>
-                        <div className='flex justify-between'>
-                            <Link href={`/artist/${artistId}/related`}><p className='text-white text-2xl font-bold hover:underline'>Fans also like</p></Link>
-                            <Link href={`/artist/${artistId}/related`}><p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p></Link>
-                        </div>
-                        <div className='flex flex-wrap'>
-                            {pageInfo.artistRelatedArtists.map((artistInfo, index) => {
-                                return (
-                                    <div key={artistInfo.id} className='w-1/6 mt-4'>
-                                        <UI.Cards.ArtistCard key={artistInfo.id} artistInfo={artistInfo} />
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
+                    {pageInfo.artistRelatedArtists.length !== 0 &&
+                        <>
+                            <div className='flex flex-col mt-6'>
+                                <div className='flex justify-between'>
+                                    <Link href={`/artist/${artistId}/related`}><p className='text-white text-2xl font-bold hover:underline'>Fans also like</p></Link>
+                                    <Link href={`/artist/${artistId}/related`}><p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p></Link>
+                                </div>
+                                <div className='flex flex-wrap'>
+                                    {pageInfo.artistRelatedArtists.map((artistInfo, index) => {
+                                        return (
+                                            <div key={artistInfo.id} className='w-1/6 mt-4'>
+                                                <UI.Cards.ArtistCard key={artistInfo.id} artistInfo={artistInfo} />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </>
+                    }
                     {/* Appears On Section */}
-                    <div className='flex flex-col mt-6'>
-                        <div className='flex justify-between'>
-                            <Link href={`/artist/${artistId}/appears-on`}><p className='text-white text-2xl font-bold hover:underline'>Appears on</p></Link>
-                            <Link href={`/artist/${artistId}/appears-on`}><p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p></Link>
-                        </div>
-                        <div className='flex flex-wrap mt-4'>
-                            {pageInfo.appearsOn.map((albumInfo, index) => {
-                                return (
-                                    <div key={albumInfo.id} className=' w-1/6'>
-                                        <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
+                    {pageInfo.appearsOn.length !== 0 &&
+                        <>
+                            <div className='flex flex-col mt-6'>
+                                <div className='flex justify-between'>
+                                    <Link href={`/artist/${artistId}/appears-on`}><p className='text-white text-2xl font-bold hover:underline'>Appears on</p></Link>
+                                    <Link href={`/artist/${artistId}/appears-on`}><p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p></Link>
+                                </div>
+                                <div className='flex flex-wrap mt-4'>
+                                    {pageInfo.appearsOn.map((albumInfo, index) => {
+                                        return (
+                                            <div key={albumInfo.id} className=' w-1/6'>
+                                                <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </>
+                    }
                 </div>
                 <ToastContainer />
             </div >

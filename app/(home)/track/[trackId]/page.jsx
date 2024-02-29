@@ -32,6 +32,7 @@ const TrackPage = () => {
     const [pageInfo, setPageInfo] = useState(undefined)
     const [time, setTime] = useState(undefined)
     const [likedSongs, setLikedSongs] = useState(undefined)
+    const [albumLikedSongs, setAlbumLikedSongs] = useState(undefined)
     const [updateLikedSong, setUpdateLikedSong] = useState(true);
     const [isFollowed, setIsFollowed] = useState(true)
     const [loading, setLoading] = useState(true)
@@ -67,6 +68,13 @@ const TrackPage = () => {
                 const artist = await spotifyApi.getArtist(track.body.artists[0].id)
                 const topTrack = await spotifyApi.getArtistTopTracks(track.body.artists[0].id, 'IT')
                 const popularLikedSongsId = await spotifyApi.containsMySavedTracks(topTrack.body.tracks.map(song => song.id))
+                const artistProduction = await spotifyApi.getArtistAlbums(track.body.artists[0].id)
+                const albums = artistProduction.body.items.filter(type => type.album_type === 'album')
+                const singles = artistProduction.body.items.filter(type => type.album_type === 'single')
+                const albumTracks = await spotifyApi.getAlbumTracks(track.body.album.id, { limit: 50 })
+                const album = await spotifyApi.getAlbum(track.body.album.id)
+                const likedAlbumTrackId = await spotifyApi.containsMySavedTracks(album.body.tracks.items.map(track => track.id))
+
 
                 spotifyApi.containsMySavedTracks([trackId])
                     .then((data) => {
@@ -79,6 +87,10 @@ const TrackPage = () => {
                     trackInfo: track.body,
                     artistInfo: artist.body,
                     artistTopTrack: topTrack.body.tracks.slice(0, 5),
+                    artistAlbum: albums.slice(0, 6),
+                    artistSingle: singles.slice(0, 6),
+                    albumTracks: albumTracks.body.items,
+                    albumInfo: album.body
                 }
 
                 const minutes = Math.floor(pageData.trackInfo.duration_ms / 60000)
@@ -86,6 +98,7 @@ const TrackPage = () => {
 
                 setTime(minutes + ":" + seconds)
                 setPageInfo(pageData)
+                setAlbumLikedSongs(likedAlbumTrackId.body)
                 setLikedSongs(popularLikedSongsId.body)
                 setLoading(false)
             } catch (err) {
@@ -97,9 +110,9 @@ const TrackPage = () => {
 
     if (!loading)
         return (
-            <div className='flex flex-col bg-spotify-dark p-7'>
+            <div className='flex flex-col bg-spotify-dark'>
                 {/* Track Header Section */}
-                <div className='flex'>
+                <div className='flex p-7'>
                     {pageInfo.trackInfo.album.images.length === 0 ? <MdHideImage /> :
                         <Image
                             src={pageInfo.trackInfo.album.images[0].url}
@@ -149,15 +162,83 @@ const TrackPage = () => {
                 </div>
                 {/* Artist Popular Section */}
                 <div className='flex flex-col mt-8'>
-                    <p className="text-spotify-light-gray text-sm font-bold ml-10">Popular Tracks by</p>
-                    <p className='text-white text-2xl font-bold ml-10'>{pageInfo.artistInfo.name}</p>
-                    <table className='table-auto border-separate border-spacing-y-3 mt-3 mx-6'>
-                        {pageInfo.artistTopTrack.map((trackInfo, index) => {
+                    <div className='flex flex-col'>
+                        <p className="text-spotify-light-gray text-sm font-bold ml-10">Popular Tracks by</p>
+                        <p className='text-white text-2xl font-bold ml-10'>{pageInfo.artistInfo.name}</p>
+                        <table className='table-auto border-separate border-spacing-y-3 mt-3 mx-6'>
+                            {pageInfo.artistTopTrack.map((trackInfo, index) => {
+                                return (
+                                    <UI.TrackLists.TracksList key={trackInfo.id} index={index} trackInfo={trackInfo} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
+                                )
+                            })}
+                        </table>
+                    </div>
+                    {/* Artist Popular Albums Section */}
+                    <div className='flex justify-between pl-7'>
+                        <Link href={`/artist/${pageInfo.artistInfo.id}/discography/all`}>
+                            <p className='text-white font-bold text-2xl hover:underline'>Popular albums by {pageInfo.artistInfo.name}</p>
+                        </Link>
+                        <Link href={`/artist/${pageInfo.artistInfo.id}/discography/all`}>
+                            <p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p>
+                        </Link>
+                    </div>
+                    <div className='flex mt-4 pl-7'>
+                        {pageInfo.artistAlbum.map((albumInfo, index) => {
                             return (
-                                <UI.TrackLists.TracksList key={trackInfo.id} index={index} trackInfo={trackInfo} likedSongs={likedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
+                                <div key={albumInfo.id} className=' w-1/6'>
+                                    <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <div className='flex justify-between pl-7'>
+                        <Link href={`/artist/${pageInfo.artistInfo.id}/discography/all`}>
+                            <p className='text-white font-bold text-2xl hover:underline'>Popular Singles and EPs by {pageInfo.artistInfo.name}</p>
+                        </Link>
+                        <Link href={`/artist/${pageInfo.artistInfo.id}/discography/all`}>
+                            <p className='text-spotify-light-gray text-sm font-bold mt-2 mr-6 hover:underline'>Show all</p>
+                        </Link>
+                    </div>
+                    <div className='flex mt-4 pl-7'>
+                        {pageInfo.artistSingle.map((albumInfo, index) => {
+                            return (
+                                <div key={albumInfo.id} className=' w-1/6'>
+                                    <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
+                                </div>
+                            )
+                        })}
+                    </div>
+                    {/* Album Tracklist Section */}
+                    <div className='flex mt-7 pl-7'>
+                        {pageInfo.trackInfo.album.images.length === 0 ? <MdHideImage /> :
+                            <Image
+                                src={pageInfo.trackInfo.album.images[0].url}
+                                alt='Track Image'
+                                width={640}
+                                height={640}
+                                className='w-20 h-20'
+                            />
+                        }
+                        <div className='flex flex-col text-white ml-4 mt-4'>
+                            <p className='text-sm font-semibold'>From the album </p>
+                            <Link href={`/album/${pageInfo.trackInfo.album.id}`}>
+                                <p className='hover:underline font-bold'>{pageInfo.trackInfo.album.name}</p>
+                            </Link>
+                        </div>
+                    </div>
+                    <table className='table-auto border-separate border-spacing-y-3 pt-6 px-6'>
+                        {pageInfo.albumTracks.map((trackInfo, index) => {
+                            return (
+                                <UI.TrackLists.AlbumTrackList key={trackInfo.id} trackInfo={trackInfo} index={index} albumLikedSongs={albumLikedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
                             )
                         })}
                     </table>
+                    <p className='text-spotify-light-gray text-sm font-bold mt-6 ml-10'>{dayjs(pageInfo.albumInfo.release_date).format('MMMM D, YYYY')}</p>
+                    {pageInfo.albumInfo.copyrights.map((copyright, index) => {
+                        return (
+                            <p key={index} className='text-spotify-light-gray text-[11px] font-semibold ml-10'>{copyright.text}</p>
+                        )
+                    })}
                 </div>
                 <ToastContainer />
             </div>

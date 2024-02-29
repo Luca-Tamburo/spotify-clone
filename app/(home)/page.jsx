@@ -10,12 +10,10 @@ import useGreeting from "@/hooks/useGreeting";
 import LoadingPage from "./loading";
 import * as UI from '../../components/index'
 
-// Styles
-
 const Home = () => {
   const spotifiApi = useSpotify();
   const [loading, setLoading] = useState(true)
-  const [suggestedPlaylists, setSuggestedPlaylists] = useState(undefined)
+  const [pageInfo, setPageInfo] = useState(undefined)
   const greeting = useGreeting();
 
   useEffect(() => {
@@ -26,10 +24,11 @@ const Home = () => {
 
         const playlists = {
           "featuredPlaylists": featPlaylists.body.playlists.items,
-          "newReleases": newReleases.body.albums.items
+          "newAlbumReleases": newReleases.body.albums.items.filter(it => it.album_type === 'album'),
+          "newSingleReleases": newReleases.body.albums.items.filter(it => it.album_type === 'single'),
         }
 
-        setSuggestedPlaylists(playlists);
+        setPageInfo(playlists);
         setLoading(false);
       } catch (err) {
         console.log('Something went wrong!', err);
@@ -46,7 +45,7 @@ const Home = () => {
         <p className="text-2xl font-bold mt-4 ml-2">Selected For You</p>
         {/* Featured playlists section */}
         <div className="flex flex-wrap mt-4">
-          {suggestedPlaylists.featuredPlaylists.map((playlistInfo, index) => {
+          {pageInfo.featuredPlaylists.map((playlistInfo, index) => {
             return (
               <div className='w-1/6 px-2' key={playlistInfo.id}>
                 <UI.Cards.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
@@ -56,11 +55,22 @@ const Home = () => {
         </div>
         {/* New Release playlists section */}
         <p className="text-2xl font-bold mt-6 ml-2">New Releases</p>
+        <p className="text-xl font-bold mt-6 ml-2">Albums</p>
         <div className="flex flex-wrap mt-1">
-          {suggestedPlaylists.newReleases.map((playlistInfo, index) => {
+          {pageInfo.newAlbumReleases.map((albumInfo, index) => {
             return (
-              <div className='w-1/6 px-2 mt-4' key={playlistInfo.id}>
-                <UI.Cards.PlaylistCard key={playlistInfo.id} playlistInfo={playlistInfo} />
+              <div className='w-1/6 px-2 mt-4' key={albumInfo.id}>
+                <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
+              </div>
+            )
+          })}
+        </div>
+        <p className="text-xl font-bold mt-6 ml-2">Singles</p>
+        <div className="flex flex-wrap mt-1">
+          {pageInfo.newSingleReleases.map((albumInfo, index) => {
+            return (
+              <div className='w-1/6 px-2 mt-4' key={albumInfo.id}>
+                <UI.Cards.AlbumCard key={albumInfo.id} albumInfo={albumInfo} />
               </div>
             )
           })}

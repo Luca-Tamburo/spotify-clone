@@ -13,6 +13,7 @@ import { useSession } from 'next-auth/react'
 // Hooks
 import useSpotify from '@/hooks/useSpotify'
 import useNotification from '@/hooks/useNotification'
+import useDuration from '@/hooks/useDuration'
 
 // Components
 import LoadingPage from '../../loading'
@@ -26,6 +27,7 @@ const EpisodePage = () => {
     const { data: session } = useSession();
     const spotifyApi = useSpotify();
     const notify = useNotification();
+    const computeTime = useDuration();
     const pathname = usePathname();
 
     const [pageInfo, setPageInfo] = useState(undefined)
@@ -83,13 +85,11 @@ const EpisodePage = () => {
                     }
                 });
 
-                const minutes = Math.floor(episode.body.duration_ms / 60000);
-                const seconds = Math.floor((episode.body.duration_ms % 60000) / 1000).toFixed(0);
 
                 setPageInfo(episode.body)
+                setDuration(computeTime(episode.body.duration_ms))
                 setLoading(false)
                 setIsFollowed(checkFollowEpisode.data[0])
-                setDuration(minutes + " min " + seconds + " sec")
 
             } catch (err) {
                 console.log('Something went wrong!', err);

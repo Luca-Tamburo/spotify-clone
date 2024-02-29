@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 // Hooks
 import useSpotify from '@/hooks/useSpotify'
 import useNotification from '@/hooks/useNotification'
+import useDuration from '@/hooks/useDuration'
 
 // Components
 import LoadingPage from '../../loading'
@@ -18,12 +19,13 @@ import * as UI from '../../../../components/index'
 
 // Styles
 import { MdHideImage } from 'react-icons/md'
-import { BsFillPlayCircleFill } from 'react-icons/bs'
+import { BsFillPlayCircleFill, BsThreeDots } from 'react-icons/bs'
 import { HiOutlineHeart, HiHeart } from 'react-icons/hi'
 
 const AlbumPage = () => {
     const spotifyApi = useSpotify();
     const notify = useNotification();
+    const computeTime = useDuration();
     const pathname = usePathname();
 
     const [pageInfo, setPageInfo] = useState(undefined);
@@ -32,6 +34,7 @@ const AlbumPage = () => {
     const [updateLikedSong, setUpdateLikedSong] = useState(true);
     const [duration, setDuration] = useState(undefined)
     const [isFollowed, setIsFollowed] = useState(true);
+    const [isOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(true);
 
     const albumId = pathname.split("/")[2];
@@ -56,6 +59,11 @@ const AlbumPage = () => {
                 notify.error("Error! Try again")
                 console.log('Something went wrong!', err);
             })
+    }
+
+    const handleShareLink = () => {
+        copy(`https://spotify-clone-six-beta.vercel.app/album/${albumId}`);
+        notify.success("Link copied to clipboard")
     }
 
     useEffect(() => {
@@ -84,11 +92,10 @@ const AlbumPage = () => {
                     "duration": it.duration_ms
                 })).reduce((accumulator, currentTrack) => accumulator + currentTrack.duration, 0);
 
-                const minutes = Math.floor(totalDurationms / 60000);
-                const seconds = Math.floor((totalDurationms % 60000) / 1000).toFixed(0);
+
+                setDuration(computeTime(totalDurationms))
 
                 setPageInfo(pageData)
-                setDuration(minutes + " min " + seconds + " sec")
                 setAlbumLikedSongs(likedAlbumTrackId.body)
                 setLikedSongs(popularLikedSongsId.body)
                 setLoading(false);
@@ -113,63 +120,82 @@ const AlbumPage = () => {
                             className="w-56 h-56"
                         /> : <MdHideImage size={25} className="w-56 h-56" />
                     }
-                    <div className='flex flex-col text-white font-bold ml-4 mt-8'>
-                        <p className='text-sm'>{pageInfo.albumInfo.album_type.charAt(0).toUpperCase()}{pageInfo.albumInfo.album_type.slice(1)}</p>
-                        <p className='text-8xl my-4'>{pageInfo.albumInfo.name}</p>
-                        <div className='flex mt-6'>
+                    <div className='flex flex-col text-white font-bold ml-4'>
+                        <p className='text-sm mt-14'>{pageInfo.albumInfo.album_type.charAt(0).toUpperCase()}{pageInfo.albumInfo.album_type.slice(1)}</p>
+                        <p className='text-8xl mt-2'>{pageInfo.albumInfo.name}</p>
+                        <div className='flex mt-5'>
                             {pageInfo.albumInfo.artists.length === 1 &&
-                                <div className='text-white'>
-                                    {pageInfo.artistsInfo.artists[0].images[0].url ?
-                                        <Image
-                                            src={pageInfo.artistsInfo.artists[0].images[0].url}
-                                            alt="Artist Image"
-                                            width={640}
-                                            height={640}
-                                            className="rounded-full w-6 h-6 mr-3"
-                                        /> : <MdHideImage size={25} className="w-6 h-6" />
-                                    }
-                                </div>
+                                pageInfo.artistsInfo.artists[0].images[0].url ?
+                                <Image
+                                    src={pageInfo.artistsInfo.artists[0].images[0].url}
+                                    alt="Artist Image"
+                                    width={640}
+                                    height={640}
+                                    className="rounded-full w-6 h-6 mr-3"
+                                /> : <MdHideImage size={25} className="w-6 h-6" />
                             }
-                            {pageInfo.artistsInfo.artists.map((artistInfo, index) => {
-                                return (
-                                    <>
-                                        <Link href={`/artist/${artistInfo.id}`} className='text-sm'>{artistInfo.name}</Link>
-                                        <p className='mx-1 text-sm'>&bull;</p>
-                                    </>
-                                )
-                            })}
-                            <p className='text-sm'>{dayjs(`${pageInfo.albumInfo.release_date}`).format('YYYY')}</p>
-                            <p className='text-sm mx-1'>&bull;</p>
-                            {pageInfo.albumInfo.total_tracks === 1 ?
-                                <p className='text-sm'>{pageInfo.albumInfo.total_tracks} song,</p>
-                                : <p className='text-sm'>{pageInfo.albumInfo.total_tracks} songs,</p>
-                            }
-                            {/* TODO: Aggiungere il conteggio totale delle ore e dei minuti */}
-                            <span className='text-spotify-light-gray text-sm font-semibold ml-1'>{duration}</span>
+                            <div className='flex mt-1'>
+                                {pageInfo.artistsInfo.artists.map((artistInfo, index) => {
+                                    return (
+                                        <>
+                                            <Link href={`/artist/${artistInfo.id}`} className='text-sm hover:underline'>{artistInfo.name}</Link>
+                                            <p className='mx-1 text-sm'>&bull;</p>
+                                        </>
+                                    )
+                                })}
+                                <p className='text-sm'>{dayjs(`${pageInfo.albumInfo.release_date}`).format('YYYY')}</p>
+                                <p className='text-sm mx-1'>&bull;</p>
+                                {pageInfo.albumInfo.total_tracks === 1 ?
+                                    <p className='text-sm'>{pageInfo.albumInfo.total_tracks} song,</p>
+                                    : <p className='text-sm'>{pageInfo.albumInfo.total_tracks} songs,</p>
+                                }
+                                <span className='text-spotify-light-gray text-sm font-semibold ml-1'>{duration}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {/* Album Song List Section */}
                 <div className='flex flex-col'>
-                    <div className='flex'>
+                    <div className='flex mt-6'>
                         <button className='text-spotify-green rounded-full'>
-                            <BsFillPlayCircleFill size={50} className="mt-6 ml-8 hover:scale-105" />
+                            <BsFillPlayCircleFill size={50} className="ml-8 hover:scale-105" />
                         </button>
                         {isFollowed ?
                             <button onClick={() => handleRemoveFollow([albumId])}>
-                                <HiHeart size={45} className="mt-6 ml-8 text-spotify-green hover:scale-105" />
+                                <HiHeart size={45} className="ml-8 text-spotify-green hover:scale-105" />
                             </button>
                             :
                             <button onClick={() => handleAddFollow([albumId])}>
-                                <HiOutlineHeart size={45} className="mt-6 ml-8 text-spotify-light-gray hover:scale-105 hover:text-white" />
+                                <HiOutlineHeart size={45} className="ml-8 text-spotify-light-gray hover:scale-105 hover:text-white" />
                             </button>
                         }
+                        <button onClick={() => setIsOpen(!isOpen)} className='m-2 inline-flex ml-8 text-spotify-light-gray'>
+                            <BsThreeDots size={30} />
+                        </button>
+                        {isOpen &&
+                            <div className='absolute bg-spotify-light-dark text-white mt-2 font-semibold rounded' onMouseLeave={() => setIsOpen(false)} onClick={() => setIsOpen(false)}>
+                                <ul className='pt-2 pl-2 pb-2 pr-1 w-40'>
+                                    {/* TODO: Da implementare */}
+                                    <li className='hover:bg-spotify-gray rounded'>
+                                        <button>Add to queue</button>
+                                    </li>
+                                    <li className='my-3 hover:bg-spotify-gray rounded'>
+                                        <button className='border-b'
+                                            onClick={() => handleAddFollow(pageInfo.playlist.id)}>Add to your library
+                                        </button>
+                                    </li>
+                                    <li className='hover:bg-spotify-gray rounded'>
+                                        <button onClick={handleShareLink}>Copy link to playlist</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     </div>
-                    <table className='table-auto border-separate border-spacing-y-3 pt-6 px-6'>
+                    <table className='table-auto border-separate border-spacing-y-3 pt-6 px-4'>
                         <UI.TrackLists.TrackListHeader />
                         {pageInfo.albumInfo.tracks.items.map((trackInfo, index) => {
                             return (
-                                <UI.TrackLists.AlbumTrackList key={trackInfo.id} trackInfo={trackInfo} index={index} albumLikedSongs={albumLikedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} />
+                                <UI.TrackLists.AlbumTrackList key={trackInfo.id} trackInfo={trackInfo} index={index} albumLikedSongs={albumLikedSongs[index]} setUpdateLikedSong={setUpdateLikedSong} updateLikedSong={updateLikedSong} albumId={albumId} />
                             )
                         })}
                     </table>
